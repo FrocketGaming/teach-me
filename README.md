@@ -31,13 +31,11 @@ The fix isn't more resources — it's collapsing both directions to one-to-one: 
 
 ```mermaid
 graph LR
-    A["🔍 Probe<br/>find the edge of<br/>what you know"] --> B["🗺️ Plan<br/>fact-checked path,<br/>shown as a graph"]
-    B --> C["🎓 Teach<br/>one step at a time,<br/>quizzed as it lands"]
-    C -.->|"resumes here<br/>next session"| B
-
-    classDef phase fill:#eae8e0,stroke:#2f6f5e,stroke-width:1px,color:#1c231f
-    class A,B,C phase
+    A(["Probe\nfind the edge of\nwhat you know"]) --> B(["Plan\nfact-checked path,\nshown as a graph"])
+    B --> C(["Teach\none step at a time,\nquizzed as it lands"])
 ```
+
+A later `/teach-me` on the same topic reads the log and resumes teaching from wherever the graph was left, instead of starting the whole pipeline over.
 
 | Phase | What happens |
 |---|---|
