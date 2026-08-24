@@ -39,9 +39,9 @@ A later `/teach-me` on the same topic reads the log and resumes teaching from wh
 
 | Phase | What happens |
 |---|---|
-| **Probe** | Graded multiple-choice questions binary-search the edge of your understanding on every concept the topic depends on. Answer what you know and it skips ahead; answer wrong or "I don't know" and it narrows in on exactly where the gap is. |
-| **Plan** | Reasons out a teaching path from your current understanding to your goal, fact-checks it with a separate subagent before committing, and shows the result as a dependency graph — partly so you can see what's coming, mostly because being forced to draw the graph stops the plan from being improvised on the fly. |
-| **Teach** | Walks the graph one reasoning step at a time — never bundling multiple new ideas into one message — generates and self-verifies diagrams through a subagent when a visual would help, quizzes you after each step to confirm it landed, and reteaches (differently, not just repeats) anything you get wrong. |
+| **Probe** | Multiple-choice binary-searches the edge of your understanding on every concept the topic depends on — answer what you know and it skips ahead, answer wrong or "I don't know" and it narrows in. But a correct multiple-choice pick is never the final word: once it lands on your edge, it confirms with a free-response question ("explain how you'd approach this," not "pick the right box"), because recognizing the right answer and being able to produce it are different skills, and MC alone lets a guess pass as understanding. |
+| **Plan** | Reasons out a teaching path from your current understanding to your goal, fact-checks it with a separate subagent before committing, tiers each concept as core (the goal actually depends on it) or peripheral (helpful context) so depth gets spent where it's earned, and shows the result as a dependency graph — partly so you can see what's coming, mostly because being forced to draw the graph stops the plan from being improvised on the fly. |
+| **Teach** | Walks the graph one reasoning step at a time — never bundling multiple new ideas into one message — generates and self-verifies diagrams through a subagent when a visual would help, and checks comprehension in a mix of formats: multiple-choice for a quick fact, free-response for anything that tests actual reasoning. A concept only gets marked mastered once it's been applied to something new, not just recognized or re-explained back verbatim. Anything wrong or hollow-sounding gets retaught a different way, not just corrected and left behind. Before starting each new concept, it pauses and hands you the floor for any question that a quiz wouldn't have surfaced — and you can jump in with one anytime, not just at that checkpoint. |
 
 Everything is written to a persistent markdown log per topic as it happens, so you can reopen it later (Obsidian renders it live, LaTeX included), and a later `/teach-me` on the same topic resumes from exactly where you left off instead of re-probing from scratch.
 
@@ -148,7 +148,7 @@ If you invoke `/teach-me` again on a topic you've already started, it reads the 
 
 > Based on the process described in [this video](https://youtu.be/kzcI5F4tGiU) by **Eero Alvar** — all credit for the original probe/plan/teach philosophy goes to him.
 
-This repo is an independent reimplementation of that process for Claude Code's actual tools, plus a few extensions of its own: session resuming, wrong-answer reteaching, and an end-of-session review queue.
+This repo is an independent reimplementation of that process for Claude Code's actual tools, plus a few extensions of its own: session resuming, mixed multiple-choice/free-response checks that gate mastery on transfer rather than a lucky pick, per-node discussion pauses, depth tiering by how load-bearing a concept actually is, wrong-answer reteaching, and an end-of-session review queue.
 
 ## License
 
