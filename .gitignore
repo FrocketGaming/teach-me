@@ -1,0 +1,5 @@
+# Fetched by install.sh (bundles a ~250MB Chromium build) - never commit this.
+assets/visualize/node_modules/
+
+# install.sh's own scratch files, if a run is interrupted mid-way.
+.install-tmp-*.bat

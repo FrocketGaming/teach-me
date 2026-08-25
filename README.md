@@ -41,7 +41,7 @@ A later `/teach-me` on the same topic reads the log and resumes teaching from wh
 |---|---|
 | **Probe** | Multiple-choice binary-searches the edge of your understanding on every concept the topic depends on — answer what you know and it skips ahead, answer wrong or "I don't know" and it narrows in. But a correct multiple-choice pick is never the final word: once it lands on your edge, it confirms with a free-response question ("explain how you'd approach this," not "pick the right box"), because recognizing the right answer and being able to produce it are different skills, and MC alone lets a guess pass as understanding. |
 | **Plan** | Reasons out a teaching path from your current understanding to your goal, fact-checks it with a separate subagent before committing, tiers each concept as core (the goal actually depends on it) or peripheral (helpful context) so depth gets spent where it's earned, and shows the result as a dependency graph — partly so you can see what's coming, mostly because being forced to draw the graph stops the plan from being improvised on the fly. |
-| **Teach** | Walks the graph one reasoning step at a time — never bundling multiple new ideas into one message — generates and self-verifies diagrams through a subagent when a visual would help, and checks comprehension in a mix of formats: multiple-choice for a quick fact, free-response for anything that tests actual reasoning. A concept only gets marked mastered once it's been applied to something new, not just recognized or re-explained back verbatim. Anything wrong or hollow-sounding gets retaught a different way, not just corrected and left behind. Before starting each new concept, it pauses and hands you the floor for any question that a quiz wouldn't have surfaced — and you can jump in with one anytime, not just at that checkpoint. |
+| **Teach** | Walks the graph one reasoning step at a time — never bundling multiple new ideas into one message — dispatches a `diagram-maker` subagent when a visual would help (it renders the diagram and actually looks at the result before handing it back, never a diagram that's merely written and trusted), and checks comprehension in a mix of formats: multiple-choice for a quick fact, free-response for anything that tests actual reasoning, or a real interactive dashboard (rendered math, a graded question, a live code editor with instant test feedback) when the check is dense enough that chat text alone would strain — submitting one notifies the session directly, no polling. A concept only gets marked mastered once it's been applied to something new, not just recognized or re-explained back verbatim. Anything wrong or hollow-sounding gets retaught a different way, not just corrected and left behind. Before starting each new concept, it pauses and hands you the floor for any question that a quiz wouldn't have surfaced — and you can jump in with one anytime, not just at that checkpoint. |
 
 Everything is written to a persistent markdown log per topic as it happens, so you can reopen it later (Obsidian renders it live, LaTeX included), and a later `/teach-me` on the same topic resumes from exactly where you left off instead of re-probing from scratch.
 
@@ -106,19 +106,15 @@ A fresh critic later compared this session blind against the source video's own 
 
 ## Install
 
-Copy `SKILL.md` into your Claude Code skills directory as its own folder:
-
 ```
-~/.claude/skills/teach-me/SKILL.md
+git clone <this repo> teach-me && cd teach-me && ./install.sh
 ```
 
-or, for a single project only:
-
-```
-<project>/.claude/skills/teach-me/SKILL.md
-```
+`install.sh` links (or, where a real link isn't available, copies) this repo into `~/.claude/skills/teach-me` and the `diagram-maker` subagent into `~/.claude/agents/diagram-maker.md`, then installs the diagram renderer's native dependency (Puppeteer, which bundles its own headless Chromium — a one-time ~250MB download; it's not committed to the repo). It prefers a real symlink so that pulling updates or editing the repo takes effect immediately with nothing to resync; where the OS/filesystem won't allow one it falls back to a plain copy and tells you so — in that case, re-run `./install.sh` after pulling changes. Safe to re-run any time.
 
 Restart Claude Code (or start a new session) and `/teach-me` will be available.
+
+Doing it by hand instead of running the script: copy `SKILL.md` and `assets/` into `~/.claude/skills/teach-me/`, and `agents/diagram-maker.md` into `~/.claude/agents/diagram-maker.md`, then `cd ~/.claude/skills/teach-me/assets/visualize && npm install`.
 
 ## Use
 
@@ -135,13 +131,18 @@ If you invoke `/teach-me` again on a topic you've already started, it reads the 
 ## Requirements
 
 - Claude Code, with the `AskUserQuestion` and `Agent` (subagent) tools available — both are standard.
-- A way to render and view an SVG/image (a browser tool, an image-capable file viewer, etc.) for the visual-verification step in the teach phase. If none is available, the skill says so plainly rather than shipping an unverified diagram — visuals just get skipped or described in words instead.
-- Nothing else. No MCP server, no external API, no paid tooling.
+- Node.js, for `install.sh`'s one-time Puppeteer/Chromium download and for the `diagram-maker` subagent's renderer.
+- For interactive checks specifically (dense math, code-writing challenges): the Artifact tool with the `artifact` runtime capability, i.e. Claude Code with Artifacts publishing enabled. Without it, the skill falls back to plain chat questions rather than a dashboard — it never claims a check happened through the interactive layer when it didn't.
+- Nothing paid. No MCP server, no external API, no third-party account.
+
+**Built for Claude Code specifically, not portable as-is.** The probe/plan/teach philosophy and the pedagogical rules (the distractor-writing procedure, MC-then-free-response, depth tiering) are plain prose and would carry over fine to any assistant you can hand a long system prompt to — GitHub Copilot included. The *mechanics* this repo actually runs on won't: `AskUserQuestion`'s structured multi-choice UI, the `Agent` tool's subagent dispatch (what `diagram-maker` runs as), and the Artifact tool's publish/watch/notify loop the interactive checks depend on are all Claude Code/claude.ai-specific — there's no Copilot equivalent to translate them onto. A Copilot version would mean rebuilding the interactive layer against whatever Copilot actually exposes, not copying files over.
 
 ## Notes and known limitations
 
 - The quiz mechanic has been exercised against a scripted learner persona during development, not yet against a large sample of real, unpredictable answers — expect to file sharp edges as you actually use it.
-- Diagram rendering falls back to whatever's available in your environment; the fallback path is more fragile than the primary one and won't look identical across machines.
+- `diagram-maker` renders locally (Puppeteer + a bundled Chromium, installed by `install.sh`) — no fallback path, no external rendering service, so a diagram either gets rendered and looked at or the subagent says plainly it couldn't and skips it.
+- The interactive-check template (`assets/interactive-check/`) is self-hosted (its own bundled KaTeX, no CDN calls at runtime), has been exercised live end-to-end (submit → notify → grade), and has since been visually verified with real screenshots (the same local Puppeteer install `diagram-maker` uses, pointed at the built HTML directly). That pass caught a real bug worth knowing about if you're modifying the template: `render()` fully replaces `#app`'s innerHTML on every interaction, which wipes out KaTeX's rendered spans and puts raw `$...$` source back on screen — so `renderMathInElement` has to be called at the end of every `render()`, not once at load. It's fixed now, but it's exactly the kind of bug `verify.py`'s structural checks can't catch (the page loaded fine, looked fine on first paint, and only broke after the first click) — if you change how state changes reach the DOM, re-screenshot and click through it, don't just re-run `verify.py`.
+- `assets/visualize`'s `npm audit` currently flags 4 high-severity issues, all in Puppeteer's transitive `extract-zip` (a symlink path-traversal bug that only fires once, extracting Chromium from Google's own CDN at install time — not exposed to anything at render time). Left unpatched rather than force a breaking Puppeteer major bump that risks the mermaid-cli dependency; revisit if that chain gets a real patch release.
 - The skill deliberately doesn't prescribe a teaching voice or personality — it optimizes for pacing, rigor, and correctness, and leaves style up to you to specify if you care about it.
 
 ## Credits

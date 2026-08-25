@@ -1,0 +1,373 @@
+<!--HEAD_START--><title>Lesson Check</title>
+<meta charset="UTF-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,400;0,500;0,600;1,400&family=Karla:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/*__KATEX_CSS__*/
+</style>
+<script>
+/*__KATEX_JS__*/
+</script>
+<script>
+/*__AUTORENDER_JS__*/
+</script>
+<style>
+:root{
+  --bg:#F5F6FA; --surface:#FFFFFF; --surface-2:#ECEEF4; --border:#D8DBE6;
+  --ink:#232733; --ink-soft:#5B6072; --ink-faint:#8A8FA3;
+  --accent:#B8791E; --accent-ink:#FFFFFF; --accent-soft:#F3E4CC;
+  --correct:#227A4F; --correct-bg:#E4F5EA; --correct-border:#B7E3C7;
+  --incorrect:#B23A2B; --incorrect-bg:#FBEAE8; --incorrect-border:#F0C3BC;
+  --code-bg:#1E2130; --code-ink:#E3E6F0; --code-border:#333850;
+  --focus:#3D6FE0;
+  --shadow: 0 1px 2px rgba(35,39,51,.06), 0 8px 24px -12px rgba(35,39,51,.18);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#13141C; --surface:#1B1D29; --surface-2:#242737; --border:#333750;
+    --ink:#E7E9F2; --ink-soft:#A2A7BC; --ink-faint:#6E7389;
+    --accent:#E3A94A; --accent-ink:#1B1D29; --accent-soft:#3A2E17;
+    --correct:#4CBB7C; --correct-bg:#15301F; --correct-border:#245C3B;
+    --incorrect:#E27263; --incorrect-bg:#3A1B18; --incorrect-border:#6B2E27;
+    --code-bg:#101119; --code-ink:#E3E6F0; --code-border:#2C3046;
+    --focus:#6C93F0;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 12px 28px -14px rgba(0,0,0,.55);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#13141C; --surface:#1B1D29; --surface-2:#242737; --border:#333750;
+  --ink:#E7E9F2; --ink-soft:#A2A7BC; --ink-faint:#6E7389;
+  --accent:#E3A94A; --accent-ink:#1B1D29; --accent-soft:#3A2E17;
+  --correct:#4CBB7C; --correct-bg:#15301F; --correct-border:#245C3B;
+  --incorrect:#E27263; --incorrect-bg:#3A1B18; --incorrect-border:#6B2E27;
+  --code-bg:#101119; --code-ink:#E3E6F0; --code-border:#2C3046;
+  --focus:#6C93F0;
+  --shadow: 0 1px 2px rgba(0,0,0,.3), 0 12px 28px -14px rgba(0,0,0,.55);
+}
+*{box-sizing:border-box;}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:'Karla',system-ui,-apple-system,sans-serif;
+  font-size:16px; line-height:1.55; -webkit-font-smoothing:antialiased;
+}
+@media (prefers-reduced-motion: reduce){ *{ animation-duration:.001ms !important; transition-duration:.001ms !important; } }
+
+.wrap{ max-width:720px; margin:0 auto; padding:2.5rem 1.5rem 5rem; }
+
+.masthead{ margin-bottom:2.25rem; }
+.eyebrow{
+  font-family:'IBM Plex Mono',monospace; font-size:.72rem; letter-spacing:.11em;
+  text-transform:uppercase; color:var(--accent); font-weight:600; display:block; margin-bottom:.5rem;
+}
+h1{
+  font-family:'Newsreader',Georgia,serif; font-weight:500; font-size:1.9rem;
+  line-height:1.2; margin:0 0 .4rem; text-wrap:balance; color:var(--ink);
+}
+.subtitle{ color:var(--ink-soft); font-size:.98rem; margin:0; }
+
+.rail{ display:flex; align-items:center; gap:.4rem; margin:1.6rem 0 2.4rem; }
+.rail-step{ display:flex; align-items:center; gap:.5rem; flex:1; }
+.rail-dot{
+  width:1.6rem; height:1.6rem; border-radius:50%; border:1.5px solid var(--border);
+  display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  font-family:'IBM Plex Mono',monospace; font-size:.68rem; font-weight:600; color:var(--ink-faint);
+  background:var(--surface); transition:all .2s ease;
+}
+.rail-step.done .rail-dot{ background:var(--correct); border-color:var(--correct); color:#fff; }
+.rail-step.active .rail-dot{ border-color:var(--accent); color:var(--accent); }
+.rail-label{ font-size:.78rem; color:var(--ink-faint); font-weight:600; }
+.rail-step.active .rail-label{ color:var(--ink); }
+.rail-line{ height:1.5px; background:var(--border); flex:1; margin:0 -.1rem; }
+.rail-line.done{ background:var(--correct); }
+
+.card{
+  background:var(--surface); border:1px solid var(--border); border-radius:14px;
+  padding:1.75rem 1.75rem 1.9rem; margin-bottom:1.5rem; box-shadow:var(--shadow);
+}
+.card .eyebrow{ margin-bottom:.85rem; }
+.prompt{ font-size:1.08rem; line-height:1.6; margin:0 0 1.25rem; color:var(--ink); }
+.prompt .katex{ font-size:1.05em; }
+
+.options{ display:grid; gap:.6rem; }
+.option{
+  text-align:left; font-family:'Karla',sans-serif; font-size:.98rem; color:var(--ink);
+  background:var(--surface-2); border:1.5px solid var(--border); border-radius:10px;
+  padding:.75rem 1rem; cursor:pointer; transition:border-color .15s ease, background .15s ease, transform .1s ease;
+}
+.option:hover:not(:disabled){ border-color:var(--accent); background:var(--accent-soft); }
+.option:focus-visible{ outline:2px solid var(--focus); outline-offset:2px; }
+.option:active:not(:disabled){ transform:scale(.99); }
+.option:disabled{ cursor:default; opacity:.72; }
+.option.pick-correct{ border-color:var(--correct-border); background:var(--correct-bg); color:var(--correct); opacity:1; font-weight:600; }
+.option.pick-incorrect{ border-color:var(--incorrect-border); background:var(--incorrect-bg); color:var(--incorrect); opacity:1; font-weight:600; }
+.option .katex{ font-size:1em; }
+
+.feedback{
+  margin-top:1rem; padding:.85rem 1rem; border-radius:10px; font-size:.92rem; line-height:1.5;
+  border:1px solid; display:flex; gap:.55rem; align-items:flex-start;
+}
+.feedback.good{ background:var(--correct-bg); border-color:var(--correct-border); color:var(--correct); }
+.feedback.bad{ background:var(--incorrect-bg); border-color:var(--incorrect-border); color:var(--incorrect); }
+.feedback.pending{ background:var(--surface-2); border-color:var(--border); color:var(--ink-soft); }
+.feedback-mark{ font-family:'IBM Plex Mono',monospace; font-weight:700; flex-shrink:0; }
+
+textarea.answer{
+  width:100%; resize:vertical; min-height:6.5rem; font-family:'Karla',sans-serif;
+  font-size:.98rem; line-height:1.6; color:var(--ink); background:var(--surface-2);
+  border:1.5px solid var(--border); border-radius:10px; padding:.8rem .9rem;
+}
+textarea.answer:focus-visible{ outline:2px solid var(--focus); outline-offset:1px; }
+textarea.answer:disabled{ opacity:.75; }
+
+.code-editor{
+  width:100%; min-height:9rem; resize:vertical; font-family:'IBM Plex Mono',monospace;
+  font-size:.88rem; line-height:1.6; color:var(--code-ink); background:var(--code-bg);
+  border:1.5px solid var(--code-border); border-radius:10px; padding:.9rem 1rem; tab-size:2;
+  white-space:pre;
+}
+.code-editor:focus-visible{ outline:2px solid var(--focus); outline-offset:1px; }
+.code-editor:disabled{ opacity:.8; }
+
+.test-list{ list-style:none; margin:.9rem 0 0; padding:0; display:grid; gap:.4rem; font-family:'IBM Plex Mono',monospace; font-size:.82rem; }
+.test-list li{ display:flex; gap:.55rem; align-items:baseline; padding:.4rem .65rem; border-radius:8px; background:var(--surface-2); border:1px solid var(--border); }
+.test-list li.pass{ color:var(--correct); background:var(--correct-bg); border-color:var(--correct-border); }
+.test-list li.fail{ color:var(--incorrect); background:var(--incorrect-bg); border-color:var(--incorrect-border); }
+.test-mark{ font-weight:700; }
+
+.row{ display:flex; gap:.6rem; align-items:center; flex-wrap:wrap; margin-top:1.1rem; }
+button.primary, button.ghost{
+  font-family:'Karla',sans-serif; font-weight:600; font-size:.9rem; border-radius:9px;
+  padding:.6rem 1.15rem; cursor:pointer; transition:opacity .15s ease, transform .1s ease;
+}
+button.primary{ background:var(--accent); color:var(--accent-ink); border:1px solid var(--accent); }
+button.primary:hover:not(:disabled){ opacity:.88; }
+button.primary:active:not(:disabled){ transform:scale(.98); }
+button.primary:disabled{ opacity:.45; cursor:default; }
+button.ghost{ background:transparent; color:var(--ink-soft); border:1.5px solid var(--border); }
+button.ghost:hover:not(:disabled){ border-color:var(--ink-faint); color:var(--ink); }
+button:focus-visible{ outline:2px solid var(--focus); outline-offset:2px; }
+
+.status-line{ font-size:.82rem; color:var(--ink-faint); font-family:'IBM Plex Mono',monospace; margin-left:auto; display:flex; align-items:center; gap:.4rem; }
+.status-dot{ width:.45rem; height:.45rem; border-radius:50%; background:var(--ink-faint); }
+.status-line.live .status-dot{ background:var(--correct); }
+.status-line.offline .status-dot{ background:var(--incorrect); }
+
+.charcount{ font-size:.78rem; color:var(--ink-faint); font-family:'IBM Plex Mono',monospace; }
+.hint{ font-size:.82rem; color:var(--ink-faint); margin-top:.35rem; }
+.footer-note{ text-align:center; color:var(--ink-faint); font-size:.78rem; margin-top:2rem; font-family:'IBM Plex Mono',monospace; }
+</style>
+<!--HEAD_END-->
+<div id="app"></div>
+<script id="lesson-state" type="application/json">__STATE_JSON__</script>
+<script id="app-script">
+const STATIC_HEAD = __STATIC_HEAD_JSON__;
+// LESSON is the only thing a session should need to edit per topic: fill in
+// mc / free / code (any or all - each is optional, omit with null) and the
+// widget-rendering plumbing below adapts automatically. See the teach-me
+// SKILL.md "Interactive checks" section for the authoring contract.
+const LESSON = __LESSON_JSON__;
+
+function loadState(){
+  const el = document.getElementById('lesson-state');
+  return JSON.parse(el.textContent);
+}
+
+function esc(s){
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function activeSlots(){
+  return ['mc', 'free', 'code'].filter(k => LESSON[k]);
+}
+
+function railHTML(state){
+  const slots = activeSlots();
+  if (slots.length < 2) return ''; // a single-widget check doesn't need a progress rail
+  const labels = { mc: 'Concept check', free: 'Explain it', code: 'Code it' };
+  return '<div class="rail">' + slots.map((key,i) => {
+    const done = state[key].submitted;
+    const active = !done && slots.slice(0,i).every(k => state[k].submitted);
+    const cls = done ? 'done' : (active ? 'active' : '');
+    const mark = done ? '✓' : String(i+1);
+    const line = i < slots.length-1 ? '<div class="rail-line ' + (done?'done':'') + '"></div>' : '';
+    return '<div class="rail-step ' + cls + '"><div class="rail-dot">' + mark + '</div><span class="rail-label">' + labels[key] + '</span></div>' + line;
+  }).join('') + '</div>';
+}
+
+function mcHTML(state){
+  if (!LESSON.mc) return '';
+  const cfg = LESSON.mc, q = state.mc;
+  const answered = q.selected !== null;
+  const optHTML = cfg.options.map((o,i) => {
+    let cls = 'option';
+    if (answered && i === q.selected) cls += o.correct ? ' pick-correct' : ' pick-incorrect';
+    if (answered && o.correct && i !== q.selected && !cfg.options[q.selected].correct) cls += ' pick-correct';
+    return '<button class="' + cls + '" ' + (answered?'disabled':'') + ' onclick="pickMC(' + i + ')" data-correct="' + o.correct + '">' + esc(o.text) + '</button>';
+  }).join('');
+  let feedback = '';
+  if (answered) {
+    const correct = cfg.options[q.selected].correct;
+    feedback = '<div class="feedback ' + (correct?'good':'bad') + '"><span class="feedback-mark">' + (correct?'✓':'✗') + '</span><span>' +
+      esc(correct ? cfg.explainCorrect : cfg.explainWrong) + '</span></div>';
+  }
+  return '<div class="card"><span class="eyebrow">' + esc(cfg.eyebrow || 'Concept check') + '</span>' +
+    '<p class="prompt">' + esc(cfg.prompt) + '</p>' +
+    '<div class="options">' + optHTML + '</div>' + feedback + '</div>';
+}
+
+function freeHTML(state){
+  if (!LESSON.free) return '';
+  const cfg = LESSON.free, q = state.free;
+  const minChars = cfg.minChars || 8;
+  const submitted = q.submitted;
+  return '<div class="card"><span class="eyebrow">' + esc(cfg.eyebrow || 'Explain it') + '</span>' +
+    '<p class="prompt">' + esc(cfg.prompt) + '</p>' +
+    '<textarea class="answer" id="free-input" ' + (submitted?'disabled':'') + ' placeholder="Type your explanation here...">' + esc(q.text) + '</textarea>' +
+    (submitted
+      ? '<div class="feedback pending"><span class="feedback-mark">→</span><span>Submitted. This needs a real read, not a keyword check — look for the review in the chat.</span></div>'
+      : '<div class="row"><button class="primary" onclick="submitFree()" ' + (q.text.trim().length < minChars ? 'disabled' : '') + '>Submit answer</button><span class="charcount">' + q.text.length + ' chars</span></div>')
+    + '</div>';
+}
+
+function codeHTML(state){
+  if (!LESSON.code) return '';
+  const cfg = LESSON.code, q = state.code;
+  const results = q.results;
+  let testList = '';
+  if (results) {
+    testList = '<ul class="test-list">' + results.map(r =>
+      '<li class="' + (r.pass?'pass':'fail') + '"><span class="test-mark">' + (r.pass?'PASS':'FAIL') + '</span><span>' + esc(cfg.fnName) + r.input + ' → got ' + esc(String(r.got)) + ', expected ' + esc(String(r.expected)) + '</span></li>'
+    ).join('') + '</ul>';
+  }
+  const passCount = results ? results.filter(r=>r.pass).length : 0;
+  return '<div class="card"><span class="eyebrow">' + esc(cfg.eyebrow || 'Code it') + '</span>' +
+    '<p class="prompt">' + cfg.promptHTML + '</p>' +
+    '<textarea class="code-editor" id="code-input" spellcheck="false" ' + (q.submitted?'disabled':'') + '>' + esc(q.code) + '</textarea>' +
+    testList +
+    '<div class="row">' +
+      (q.submitted
+        ? '<span class="hint">Submitted — ' + passCount + '/' + cfg.tests.length + ' tests passing at submit time. Claude will follow up.</span>'
+        : '<button class="ghost" onclick="runCode()">Run tests</button><button class="primary" onclick="submitCode()">Submit code</button>')
+    + '</div></div>';
+}
+
+function appHTML(state, live){
+  return '<div class="wrap">' +
+    '<div class="masthead"><span class="eyebrow">' + esc(LESSON.eyebrow || 'Lesson check') + '</span><h1>' + LESSON.titleHTML + '</h1>' +
+    '<p class="subtitle">' + esc(LESSON.subtitle) + '</p></div>' +
+    railHTML(state) + mcHTML(state) + freeHTML(state) + codeHTML(state) +
+    '<div class="footer-note">' + (live ? 'connected — submissions notify Claude' : 'preview only — open this from Claude Code to sync') + '</div>' +
+    '</div>';
+}
+
+let state = loadState();
+let artifactAPI = null;
+
+function render(){
+  document.getElementById('app').innerHTML = appHTML(state, !!artifactAPI);
+  const freeInput = document.getElementById('free-input');
+  if (freeInput) freeInput.addEventListener('input', e => {
+    state.free.text = e.target.value;
+    // Deliberately not a full render(): that would replace #app's innerHTML
+    // on every keystroke and drop focus/cursor position mid-typing. Instead
+    // patch the two bits of the free-response card that are otherwise frozen
+    // at whatever they were computed as during the last full render - the
+    // submit button's disabled state and the char counter - directly.
+    const minChars = (LESSON.free && LESSON.free.minChars) || 8;
+    const submitBtn = e.target.parentElement.querySelector('button[onclick="submitFree()"]');
+    if (submitBtn) submitBtn.disabled = e.target.value.trim().length < minChars;
+    const counter = e.target.parentElement.querySelector('.charcount');
+    if (counter) counter.textContent = e.target.value.length + ' chars';
+  });
+  const codeInput = document.getElementById('code-input');
+  if (codeInput) {
+    codeInput.addEventListener('input', e => { state.code.code = e.target.value; });
+    codeInput.addEventListener('keydown', e => {
+      if (e.key === 'Tab') { e.preventDefault(); const s=codeInput.selectionStart,en=codeInput.selectionEnd;
+        codeInput.value = codeInput.value.slice(0,s) + '  ' + codeInput.value.slice(en);
+        codeInput.selectionStart = codeInput.selectionEnd = s+2; state.code.code = codeInput.value; }
+    });
+  }
+  // render() fully replaces #app's innerHTML on every call (every pick,
+  // submit, and run-tests), which wipes out any KaTeX spans from a previous
+  // pass and puts raw '$...$' source back on screen - so this has to run
+  // every time render() does, not just once at load. Confirmed by actually
+  // rendering the page and clicking through it: math looked fine on first
+  // paint and reverted to raw LaTeX after the very first interaction.
+  if (window.renderMathInElement) {
+    renderMathInElement(document.getElementById('app'), {
+      delimiters: [{left:'$', right:'$', display:false}, {left:'$$', right:'$$', display:true}]
+    });
+  }
+}
+
+function buildDoc(){
+  // document.head.outerHTML is NOT used here on purpose: the viewer's runtime
+  // rewrites the live <head> (injects its own frame-runtime, drops our fonts/
+  // KaTeX/CSS) before this script ever sees it, so reading it back would
+  // publish a gutted page. STATIC_HEAD is a text copy of the original head
+  // markup captured at build time, independent of what the live DOM becomes.
+  const stateHTML = '<script id="lesson-state" type="application/json">' + JSON.stringify(state).replace(/</g,'\\u003c') + '<\/script>';
+  const scriptHTML = document.getElementById('app-script').outerHTML;
+  return '<!DOCTYPE html>\n<html lang="en"><head>' + STATIC_HEAD + '</head><body><div id="app"></div>' + stateHTML + scriptHTML + '</body></html>';
+}
+
+async function persist(){
+  if (!artifactAPI) return;
+  try { await artifactAPI.publish(buildDoc()); }
+  catch (e) { console.warn('publish failed', e); }
+}
+
+function pickMC(i){
+  if (state.mc.selected !== null) return;
+  state.mc.selected = i;
+  state.mc.submitted = true;
+  render();
+  persist();
+}
+
+function submitFree(){
+  const minChars = (LESSON.free && LESSON.free.minChars) || 8;
+  if (state.free.text.trim().length < minChars || state.free.submitted) return;
+  state.free.submitted = true;
+  render();
+  persist();
+}
+
+function runCode(){
+  const cfg = LESSON.code;
+  const results = [];
+  let fn, err = null;
+  try { fn = new Function(state.code.code + '\n;return typeof ' + cfg.fnName + ' === "function" ? ' + cfg.fnName + ' : null;')(); }
+  catch (e) { err = e.message; }
+  if (!err && !fn) err = 'no ' + cfg.fnName + ' function defined';
+  for (const t of cfg.tests) {
+    if (err) { results.push({input: JSON.stringify(t.args), expected: t.expected, got: 'error: ' + err, pass:false}); continue; }
+    let got, e2 = null;
+    try { got = fn(...t.args); } catch (e) { e2 = e.message; }
+    results.push({input: JSON.stringify(t.args), expected: t.expected, got: e2 ? ('error: '+e2) : got, pass: !e2 && got === t.expected});
+  }
+  state.code.results = results;
+  render();
+}
+
+function submitCode(){
+  if (state.code.submitted) return;
+  if (!state.code.results) runCode();
+  state.code.submitted = true;
+  render();
+  persist();
+}
+
+async function init(){
+  render();
+  if (window.claude && window.claude.use) {
+    try { artifactAPI = await window.claude.use('artifact'); } catch (e) { artifactAPI = null; }
+    render(); // re-render once artifactAPI resolves, so the footer's connected/preview note is accurate
+  }
+}
+
+document.addEventListener('DOMContentLoaded', init);
+if (document.readyState !== 'loading') init();
+</script>

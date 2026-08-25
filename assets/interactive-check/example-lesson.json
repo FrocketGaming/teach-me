@@ -1,0 +1,35 @@
+{
+  "eyebrow": "Lesson check",
+  "titleHTML": "Binary search &amp; $O(\\log n)$",
+  "subtitle": "Three quick checks — a concept question, an explanation, and a coding challenge. Each submit saves here and Claude picks it up in the chat.",
+  "mc": {
+    "eyebrow": "Concept check",
+    "prompt": "A sorted array has $n = 1{,}000{,}000$ elements. Roughly how many comparisons does binary search need in the worst case?",
+    "options": [
+      {"text": "$O(n)$ — about 1,000,000 comparisons", "correct": false},
+      {"text": "$O(\\log_2 n)$ — about 20 comparisons", "correct": true},
+      {"text": "$O(n^2)$ — about $10^{12}$ comparisons", "correct": false},
+      {"text": "$O(1)$ — a constant number of comparisons", "correct": false}
+    ],
+    "explainCorrect": "Right — each comparison halves the remaining search space, so it takes about $\\log_2(1{,}000{,}000) \\approx 20$ steps, not a fraction of $n$.",
+    "explainWrong": "Not quite — binary search halves the search space every comparison. Halving repeatedly is what $\\log_2 n$ measures: $\\log_2(1{,}000{,}000) \\approx 20$."
+  },
+  "free": {
+    "eyebrow": "Explain it",
+    "prompt": "In your own words: why does cutting the search space in half each step give $O(\\log_2 n)$ time, rather than $O(n)$?",
+    "minChars": 8
+  },
+  "code": {
+    "eyebrow": "Code it",
+    "promptHTML": "Implement <code>binarySearch(arr, target)</code>: return the index of <code>target</code> in the sorted array <code>arr</code>, or <code>-1</code> if it isn't present. Aim for $O(\\log n)$, not a linear scan.",
+    "fnName": "binarySearch",
+    "starter": "function binarySearch(arr, target) {\n  // your code here\n  return -1;\n}",
+    "tests": [
+      {"args": [[1, 3, 5, 7, 9, 11], 7], "expected": 3},
+      {"args": [[1, 3, 5, 7, 9, 11], 4], "expected": -1},
+      {"args": [[2], 2], "expected": 0},
+      {"args": [[], 5], "expected": -1},
+      {"args": [[1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 10], "expected": 9}
+    ]
+  }
+}

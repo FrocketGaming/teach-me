@@ -1,0 +1,9 @@
+{
+  "name": "teach-me-visualize",
+  "private": true,
+  "description": "Local renderer for the teach-me skill's diagram-maker subagent: Mermaid and hand-authored SVG to PNG, so a diagram can be looked at before it's shown to the learner.",
+  "dependencies": {
+    "@mermaid-js/mermaid-cli": "^11.4.2",
+    "puppeteer": "^23.11.1"
+  }
+}
