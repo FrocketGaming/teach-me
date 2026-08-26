@@ -10,7 +10,6 @@ set -euo pipefail
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 CLAUDE_DIR="${CLAUDE_CONFIG_DIR:-$HOME/.claude}"
 SKILL_DEST="$CLAUDE_DIR/skills/teach-me"
-AGENT_DEST="$CLAUDE_DIR/agents/diagram-maker.md"
 
 mkdir -p "$CLAUDE_DIR/skills" "$CLAUDE_DIR/agents"
 
@@ -119,27 +118,32 @@ else
   fi
 fi
 
-# --- the diagram-maker agent (a single file among unrelated ones in the same
-# directory, so the whole agents/ dir can't be linked) ---
-AGENT_SRC="$REPO_DIR/agents/diagram-maker.md"
-rm -f "$AGENT_DEST"
-
-ln -s "$AGENT_SRC" "$AGENT_DEST" 2>/dev/null || true
-if [ -f "$AGENT_DEST" ] && verify_live_file_link "$AGENT_SRC" "$AGENT_DEST"; then
-  echo "agent: symlinked (verified live) -> $AGENT_DEST"
-else
+# --- this skill's subagents (each a single file among unrelated ones in the
+# same global agents/ directory, so the whole dir can't be linked - link each
+# one individually instead) ---
+for AGENT_SRC in "$REPO_DIR"/agents/*.md; do
+  [ -f "$AGENT_SRC" ] || continue
+  AGENT_NAME="$(basename "$AGENT_SRC")"
+  AGENT_DEST="$CLAUDE_DIR/agents/$AGENT_NAME"
   rm -f "$AGENT_DEST"
-  if is_windows; then
-    windows_mklink "" "$AGENT_DEST" "$AGENT_SRC"
-  fi
+
+  ln -s "$AGENT_SRC" "$AGENT_DEST" 2>/dev/null || true
   if [ -f "$AGENT_DEST" ] && verify_live_file_link "$AGENT_SRC" "$AGENT_DEST"; then
-    echo "agent: symlinked (Windows, verified live) -> $AGENT_DEST"
+    echo "agent: symlinked (verified live) -> $AGENT_DEST"
   else
     rm -f "$AGENT_DEST"
-    cp "$AGENT_SRC" "$AGENT_DEST"
-    echo "agent: copied (not live-linked) -> $AGENT_DEST — re-run ./install.sh after editing agents/diagram-maker.md to resync"
+    if is_windows; then
+      windows_mklink "" "$AGENT_DEST" "$AGENT_SRC"
+    fi
+    if [ -f "$AGENT_DEST" ] && verify_live_file_link "$AGENT_SRC" "$AGENT_DEST"; then
+      echo "agent: symlinked (Windows, verified live) -> $AGENT_DEST"
+    else
+      rm -f "$AGENT_DEST"
+      cp "$AGENT_SRC" "$AGENT_DEST"
+      echo "agent: copied (not live-linked) -> $AGENT_DEST — re-run ./install.sh after editing agents/$AGENT_NAME to resync"
+    fi
   fi
-fi
+done
 
 # --- native dependency for the diagram-maker subagent's renderer ---
 # Not committed to the repo (it bundles a Chromium build, ~250MB) - fetched
